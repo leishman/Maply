@@ -1,6 +1,6 @@
 <!-- The map and zoom and click functionality was created by Mike Bostock. (http://bl.ocks.org/mbostock/2206590)
 
-I've simply built off of his incredible work.
+I've simply built off of his great work. Please send suggestions to leishman3@gmail.com
 
 Alexander Leishman
 8/29/2013
@@ -105,6 +105,8 @@ d3.json("us.json", function(error, us) {
       .data(topojson.feature(us, us.objects.states).features)
     .enter().append("path")
       .attr("d", path)
+      .on("mouseover", function(){d3.select(this).style("fill", "aliceblue");})
+      .on("mouseout", function(){d3.select(this).style("fill", "#DCDCDC");})
       .on("click", clicked);
 
   g.append("path")
