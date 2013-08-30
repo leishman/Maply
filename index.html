@@ -10,6 +10,11 @@ Alexander Leishman
 <meta charset="utf-8">
 <style>
 
+
+.lead {
+  text-align: center;
+  margin: 0;
+}
 .background {
   fill: #A0C3FF;
   pointer-events: all;
@@ -62,8 +67,9 @@ iframe {
 svg {
   margin-left: auto;
   margin-right: auto;
+  margin-top: 0;
   display: block;
-  width: 90%;
+  width: 1100;
 }
 
 .footer {
@@ -84,22 +90,21 @@ svg {
 
 
 
-<div class="page-header"> 
+<div class="page-header" style="margin:0"> 
   <h1>&nbsp;&nbsp;Maply v0.1 <small>by <a href="http://www.github.com">Alexander Leishman</a></small></h1>
-
 </div>
-
+<h5 class="lead" style="margin-bottom:3px">Click a state, any state.</h5>
 
 
 
 <script>
 
-var width = 1060,
-    height = 600,
+var width = 1100,
+    height = 620,
     centered;
 
 var projection = d3.geo.albersUsa()
-    .scale(1070)
+    .scale(1300)
     .translate([width / 2, height / 2]);
 
 
@@ -135,7 +140,14 @@ d3.json("us.json", function(error, us) {
         d3.select(this).style("fill", "aliceblue");
         div.transition()
           .duration(0)
-          .style("opacity", 0.9);
+          .style("opacity", function (d) {
+            if(centered) {
+              return 0;
+            }
+            else{
+              return 0.9;
+            }
+          });
         div .html(stateName(d.id))  
           .style("left", (path.centroid(d)[0]+25) + "px")     
           .style("top", (path.centroid(d)[1]+100) + "px"); 
