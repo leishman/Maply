@@ -31,6 +31,20 @@ Alexander Leishman
   stroke-linecap: round;
   pointer-events: none;
 }
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 70px;                  
+  height: 28px;                 
+  padding: 2px;             
+  font: 12px sans-serif;        
+  background: none;   
+  border: 0px;      
+  border-radius: 0px;           
+  pointer-events: none;         
+}
+
 body .modal {
   width: 1000px; /* SET THE WIDTH OF THE MODAL */
   margin: 0px 0 0 -450px; /* CHANGE MARGINS TO ACCOMODATE THE NEW WIDTH (original = margin: -250px 0 0 -280px;) */
@@ -83,6 +97,11 @@ var projection = d3.geo.albersUsa()
     .scale(1070)
     .translate([width / 2, height / 2]);
 
+
+var div = d3.select("body").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
+
 var path = d3.geo.path()
     .projection(projection);
 
@@ -105,14 +124,46 @@ d3.json("us.json", function(error, us) {
       .data(topojson.feature(us, us.objects.states).features)
     .enter().append("path")
       .attr("d", path)
-      .on("mouseover", function(){d3.select(this).style("fill", "aliceblue");})
-      .on("mouseout", function(){d3.select(this).style("fill", "#DCDCDC");})
+      // .append("svg:title")
+      // .text(function(d){return stateName(d.id);})
+      .on("mouseover", function(d){
+        d3.select(this).style("fill", "aliceblue");
+        div.transition()
+          .duration(0)
+          .style("opacity", 0.9);
+        div .html(stateName(d.id))  
+          .style("left", (path.centroid(d)[0]+25) + "px")     
+          .style("top", (path.centroid(d)[1]+100) + "px"); 
+
+      })
+      .on("mouseout", function(d){
+        d3.select(this).style("fill", "#DCDCDC");
+        div.transition()
+          .duration(0)
+          .style("opacity",0);
+
+      })
       .on("click", clicked);
 
   g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("id", "state-borders")
       .attr("d", path);
+
+  // g.selectAll("text")
+  //   .data(topojson.feature(us, us.objects.states).features)
+  //   .enter()
+  //   .append("svg:text")
+  //   .text(function(d){return stateName(d.id);})
+  //     .attr("x", function(d){
+  //       return path.centroid(d)[0];
+  //   })
+  //   .attr("y", function(d){
+  //       return  path.centroid(d)[1];
+  //   })
+  //   .attr("text-anchor","middle")
+  //   .attr('font-size','6pt')
+  //   .attr("class","state-name");
 });
 
 // Function to look up ANSI state ID from JSON and find actual state name (yes I know it's ugly, future refactor)
