@@ -134,39 +134,44 @@ d3.json("us.json", function(error, us) {
       .data(topojson.feature(us, us.objects.states).features)
     .enter().append("path")
       .attr("d", path)
-      // .append("svg:title")
-      // .text(function(d){return stateName(d.id);})
+      // BEGIN ON MOUSEOVER
       .on("mouseover", function(d){
         d3.select(this).style("fill", "aliceblue");
-        div.transition()
-          .duration(0)
-          .style("opacity", function (d) {
-            if(centered) {
-              return 0;
-            }
-            else{
-              return 0.9;
-            }
-          });
-        div .html(stateName(d.id))  
-          .style("left", (path.centroid(d)[0]+25) + "px")     
-          .style("top", (path.centroid(d)[1]+100) + "px"); 
 
-      })
+        // Make opacity zero if map is zoomed in
+          div.transition()
+            .duration(0)
+            .style("opacity", function (d) {
+              if(centered) {  
+                return 0;
+              }
+              else{
+                return 0.9;
+              }
+            });
+
+          div .html(stateName(d.id))  
+            .style("left", (path.centroid(d)[0]+25) + "px")     
+            .style("top", (path.centroid(d)[1]+100) + "px"); 
+          })
+      // END ON MOUSEOVER
+      // BEGIN ON MOUSOUT
       .on("mouseout", function(d){
         d3.select(this).style("fill", "#DCDCDC");
         div.transition()
           .duration(0)
           .style("opacity",0);
-
-      })
+        })
+      // END ON MOUSOUT
       .on("click", clicked);
 
+  // Create State Borders
   g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("id", "state-borders")
       .attr("d", path);
 
+  // CODE TO SHOW ALL STATE LABELS
   // g.selectAll("text")
   //   .data(topojson.feature(us, us.objects.states).features)
   //   .enter()
@@ -182,6 +187,7 @@ d3.json("us.json", function(error, us) {
   //   .attr('font-size','6pt')
   //   .attr("class","state-name");
 });
+
 
 // Function to look up ANSI state ID from JSON and find actual state name (yes I know it's ugly, future refactor)
 
@@ -273,7 +279,7 @@ function clicked(d) {
       .style("stroke-width", 1.5 / k + "px");
 
 if (centered){
-    // Create variable for state name string
+    // Create variable for state name string if not centered
     state = stateName(d.id);
 
 
