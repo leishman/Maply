@@ -150,9 +150,9 @@ d3.json("us.json", function(error, us) {
               }
             });
 
-          div .html(stateName(d.id))  
-            .style("left", (path.centroid(d)[0]+25) + "px")     
-            .style("top", (path.centroid(d)[1]+100) + "px"); 
+          div .html(stateName(d.id))  // Need to find better way for positioning state names
+            .style("left", (path.centroid(d)[0]+50) + "px")     
+            .style("top", (path.centroid(d)[1]+90) + "px"); 
           })
       // END ON MOUSEOVER
       // BEGIN ON MOUSOUT
