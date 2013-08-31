@@ -136,7 +136,9 @@ d3.json("us.json", function(error, us) {
       .attr("d", path)
       // BEGIN ON MOUSEOVER
       .on("mouseover", function(d){
+        if(!centered) { 
         d3.select(this).style("fill", "aliceblue");
+        }
 
         // Make opacity zero if map is zoomed in
           div.transition()
@@ -157,19 +159,24 @@ d3.json("us.json", function(error, us) {
       // END ON MOUSEOVER
       // BEGIN ON MOUSOUT
       .on("mouseout", function(d){
+        if(!centered){
         d3.select(this).style("fill", "#DCDCDC");
+        }
         div.transition()
           .duration(0)
           .style("opacity",0);
         })
+      .on("click", function(d) {
+        d3.select(this).style("fill", "#1874CD");
+        clicked(d);
+      });
       // END ON MOUSOUT
-      .on("click", clicked);
-
-  // Create State Borders
-  g.append("path")
-      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-      .attr("id", "state-borders")
-      .attr("d", path);
+      
+// Create State Borders
+g.append("path")
+    .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+    .attr("id", "state-borders")
+    .attr("d", path);
 
   // CODE TO SHOW ALL STATE LABELS
   // g.selectAll("text")
@@ -193,57 +200,57 @@ d3.json("us.json", function(error, us) {
 
 function stateName(id) {
 
-states = [["Alabama",1],
-  ["Alaska",2],
-  ["Arizona",4],
-  ["Arkansas",5],
-  ["California",6],
-  ["Colorado",8],
-  ["Connecticut",9],
-  ["Delaware",10],
-  ["District of Columbia",11],
-  ["Florida",12],
-  ["Georgia",13],
-  ["Hawaii",15],
-  ["Idaho",16],
-  ["Illinois",17],
-  ["Indiana",18],
-  ["Iowa",19],
-  ["Kansas",20],
-  ["Kentucky",21],
-  ["Louisiana",22],
-  ["Maine",23],
-  ["Maryland",24],
-  ["Massachusetts",25],
-  ["Michigan",26],
-  ["Minnesota",27],
-  ["Mississippi",28],
-  ["Missouri",29],
-  ["Montana",30],
-  ["Nebraska",31],
-  ["Nevada",32],
-  ["New Hampshire",33],
-  ["New Jersey",34],
-  ["New Mexico",35],
-  ["New York",36],
-  ["North Carolina",37],
-  ["North Dakota",38],
-  ["Ohio",39],
-  ["Oklahoma",40],
-  ["Oregon",41],
-  ["Pennsylvania",42],
-  ["Rhode Island",44],
-  ["South Carolina",45],
-  ["South Dakota",46],
-  ["Tennessee",47],
-  ["Texas",48],
-  ["Utah",49],
-  ["Vermont",50],
-  ["Virginia",51],
-  ["Washington",53],
-  ["West Virginia",54],
-  ["Wisconsin",55],
-  ["Wyoming",56]];
+  states = [["Alabama",1],
+    ["Alaska",2],
+    ["Arizona",4],
+    ["Arkansas",5],
+    ["California",6],
+    ["Colorado",8],
+    ["Connecticut",9],
+    ["Delaware",10],
+    ["District of Columbia",11],
+    ["Florida",12],
+    ["Georgia",13],
+    ["Hawaii",15],
+    ["Idaho",16],
+    ["Illinois",17],
+    ["Indiana",18],
+    ["Iowa",19],
+    ["Kansas",20],
+    ["Kentucky",21],
+    ["Louisiana",22],
+    ["Maine",23],
+    ["Maryland",24],
+    ["Massachusetts",25],
+    ["Michigan",26],
+    ["Minnesota",27],
+    ["Mississippi",28],
+    ["Missouri",29],
+    ["Montana",30],
+    ["Nebraska",31],
+    ["Nevada",32],
+    ["New Hampshire",33],
+    ["New Jersey",34],
+    ["New Mexico",35],
+    ["New York",36],
+    ["North Carolina",37],
+    ["North Dakota",38],
+    ["Ohio",39],
+    ["Oklahoma",40],
+    ["Oregon",41],
+    ["Pennsylvania",42],
+    ["Rhode Island",44],
+    ["South Carolina",45],
+    ["South Dakota",46],
+    ["Tennessee",47],
+    ["Texas",48],
+    ["Utah",49],
+    ["Vermont",50],
+    ["Virginia",51],
+    ["Washington",53],
+    ["West Virginia",54],
+    ["Wisconsin",55],
+    ["Wyoming",56]];
 
   for (var i = 0; i < states.length; i++) {
     if (id == states[i][1]) {
@@ -251,83 +258,116 @@ states = [["Alabama",1],
     }
   }
 }
+// END stateName()
 
 // Executed when a state is clicked
 function clicked(d) {
   var x, y, k;
 
   if (d && centered !== d) {
-    var centroid = path.centroid(d);
-    x = centroid[0];
-    y = centroid[1];
-    k = 4;
-    centered = d;
+   zoomIn(d);
 
-  } else {
-    x = width / 2;
-    y = height / 2;
-    k = 1;
-    centered = null;
+  } 
+  else {
+    zoomOut(d);
   }
 
-  g.selectAll("path")
-      .classed("active", centered && function(d) { return d === centered; });
+
+
+  if (centered){
+      // Create variable for state name string if not centered
+      state = stateName(d.id);
+
+      $("h4").text("Tryna learn about " + state + "? Check this out:");
+      if (state == "Georgia") {
+        pageSource = "http://en.wikipedia.org/wiki/Georgia_(U.S._state)"
+      }
+      else{
+      pageSource = "http://www.wikipedia.org/wiki/" + state;
+      }
+      $("iframe").attr("src", pageSource)
+      $("#myModal").modal();
+      
+      console.log(state);  
+  }
+}
+// End clicked
+
+function zoomOut() {
+
+  x = width / 2;
+  y = height / 2;
+  k = 1;
+  centered = null;
+
+  // g.selectAll("path")
+  //   .classed("active", centered && function(d) { return d === centered; });
 
   g.transition()
       .duration(750)
       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
       .style("stroke-width", 1.5 / k + "px");
 
-if (centered){
-    // Create variable for state name string if not centered
-    state = stateName(d.id);
+}
 
+function zoomIn(d) {
 
-    $("h4").text("Tryna learn about " + state + "? Check this out:");
-    if (state == "Georgia") {
-      pageSource = "http://en.wikipedia.org/wiki/Georgia_(U.S._state)"
-    }
-    else{
-    pageSource = "http://www.wikipedia.org/wiki/" + state;
-    }
-    $("iframe").attr("src", pageSource)
-    $("#myModal").modal();
+    var centroid = path.centroid(d);
+    x = centroid[0];
+    y = centroid[1];
+    k = 4;
+    centered = d;
+
+  
     
-    console.log(state);  
-  }
+  g.selectAll("path")
+    .classed("active", centered && function(d) { return d === centered; });
+
+  g.transition()
+      .duration(750)
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+      .style("stroke-width", 1.5 / k + "px");
+
 
 
 }
 
+
+
+
 </script>
 <body>
   <!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">State Information</h3>
-  </div>
-  <div class="modal-body">
-    <h4>replace</h4>
-    <iframe src="" style="zoom:0.60" width="100%" height="400" frameborder="0"></iframe>
-  </div>
-  
-  <div class="modal-footer">
-    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
-  </div>
-</div>
-
-  <!-- Not crucial, but we put this under a CC By-SA 3.0 license. -->
-      <!-- http://creativecommons.org/licenses/ -->
-  <div class="row-fluid footer">
-    <div class="span12">
-      <p class="muted">This work is licensed under
-        the <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC
-          By-SA 3.0
-        </a>. Lots of credit goes to <a href="http://www.github.com/mbostock">Mike Bostock</a> for building the original map, zoom functionality and d3.js. You're a baller. </p>
+  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">State Information</h3>
+    </div>
+    <div class="modal-body">
+      <h4>replace</h4>
+      <iframe src="" style="zoom:0.60" width="100%" height="400" frameborder="0"></iframe>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="close" data-dismiss="modal" aria-hidden="true">Close</button>
     </div>
   </div>
-</div>
 
+    <!-- Not crucial, but we put this under a CC By-SA 3.0 license. -->
+        <!-- http://creativecommons.org/licenses/ -->
+    <div class="row-fluid footer">
+      <div class="span12">
+        <p class="muted">This work is licensed under
+          the <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC
+            By-SA 3.0
+          </a>. Lots of credit goes to <a href="http://www.github.com/mbostock">Mike Bostock</a> for building the original map, zoom functionality and d3.js. You're a baller. </p>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+  $('#close').on('click', function () {
+      zoomOut();
+  });
+  </script>
 </body>
 
