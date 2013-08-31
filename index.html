@@ -172,168 +172,162 @@ d3.json("us.json", function(error, us) {
       });
       // END ON MOUSOUT
       
-// Create State Borders
-g.append("path")
-    .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-    .attr("id", "state-borders")
-    .attr("d", path);
+  // Create State Borders
+  g.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .attr("id", "state-borders")
+      .attr("d", path);
 
-  // CODE TO SHOW ALL STATE LABELS
-  // g.selectAll("text")
-  //   .data(topojson.feature(us, us.objects.states).features)
-  //   .enter()
-  //   .append("svg:text")
-  //   .text(function(d){return stateName(d.id);})
-  //     .attr("x", function(d){
-  //       return path.centroid(d)[0];
-  //   })
-  //   .attr("y", function(d){
-  //       return  path.centroid(d)[1];
-  //   })
-  //   .attr("text-anchor","middle")
-  //   .attr('font-size','6pt')
-  //   .attr("class","state-name");
-});
+    // CODE TO SHOW ALL STATE LABELS
+    // g.selectAll("text")
+    //   .data(topojson.feature(us, us.objects.states).features)
+    //   .enter()
+    //   .append("svg:text")
+    //   .text(function(d){return stateName(d.id);})
+    //     .attr("x", function(d){
+    //       return path.centroid(d)[0];
+    //   })
+    //   .attr("y", function(d){
+    //       return  path.centroid(d)[1];
+    //   })
+    //   .attr("text-anchor","middle")
+    //   .attr('font-size','6pt')
+    //   .attr("class","state-name");
+  });
 
 
 // Function to look up ANSI state ID from JSON and find actual state name (yes I know it's ugly, future refactor)
 
-function stateName(id) {
+  function stateName(id) {
 
-  states = [["Alabama",1],
-    ["Alaska",2],
-    ["Arizona",4],
-    ["Arkansas",5],
-    ["California",6],
-    ["Colorado",8],
-    ["Connecticut",9],
-    ["Delaware",10],
-    ["District of Columbia",11],
-    ["Florida",12],
-    ["Georgia",13],
-    ["Hawaii",15],
-    ["Idaho",16],
-    ["Illinois",17],
-    ["Indiana",18],
-    ["Iowa",19],
-    ["Kansas",20],
-    ["Kentucky",21],
-    ["Louisiana",22],
-    ["Maine",23],
-    ["Maryland",24],
-    ["Massachusetts",25],
-    ["Michigan",26],
-    ["Minnesota",27],
-    ["Mississippi",28],
-    ["Missouri",29],
-    ["Montana",30],
-    ["Nebraska",31],
-    ["Nevada",32],
-    ["New Hampshire",33],
-    ["New Jersey",34],
-    ["New Mexico",35],
-    ["New York",36],
-    ["North Carolina",37],
-    ["North Dakota",38],
-    ["Ohio",39],
-    ["Oklahoma",40],
-    ["Oregon",41],
-    ["Pennsylvania",42],
-    ["Rhode Island",44],
-    ["South Carolina",45],
-    ["South Dakota",46],
-    ["Tennessee",47],
-    ["Texas",48],
-    ["Utah",49],
-    ["Vermont",50],
-    ["Virginia",51],
-    ["Washington",53],
-    ["West Virginia",54],
-    ["Wisconsin",55],
-    ["Wyoming",56]];
+    states = [["Alabama",1],
+      ["Alaska",2],
+      ["Arizona",4],
+      ["Arkansas",5],
+      ["California",6],
+      ["Colorado",8],
+      ["Connecticut",9],
+      ["Delaware",10],
+      ["District of Columbia",11],
+      ["Florida",12],
+      ["Georgia",13],
+      ["Hawaii",15],
+      ["Idaho",16],
+      ["Illinois",17],
+      ["Indiana",18],
+      ["Iowa",19],
+      ["Kansas",20],
+      ["Kentucky",21],
+      ["Louisiana",22],
+      ["Maine",23],
+      ["Maryland",24],
+      ["Massachusetts",25],
+      ["Michigan",26],
+      ["Minnesota",27],
+      ["Mississippi",28],
+      ["Missouri",29],
+      ["Montana",30],
+      ["Nebraska",31],
+      ["Nevada",32],
+      ["New Hampshire",33],
+      ["New Jersey",34],
+      ["New Mexico",35],
+      ["New York",36],
+      ["North Carolina",37],
+      ["North Dakota",38],
+      ["Ohio",39],
+      ["Oklahoma",40],
+      ["Oregon",41],
+      ["Pennsylvania",42],
+      ["Rhode Island",44],
+      ["South Carolina",45],
+      ["South Dakota",46],
+      ["Tennessee",47],
+      ["Texas",48],
+      ["Utah",49],
+      ["Vermont",50],
+      ["Virginia",51],
+      ["Washington",53],
+      ["West Virginia",54],
+      ["Wisconsin",55],
+      ["Wyoming",56]];
 
-  for (var i = 0; i < states.length; i++) {
-    if (id == states[i][1]) {
-      return states[i][0];
+    for (var i = 0; i < states.length; i++) {
+      if (id == states[i][1]) {
+        return states[i][0];
+      }
     }
   }
-}
 // END stateName()
 
 // Executed when a state is clicked
-function clicked(d) {
-  var x, y, k;
+  function clicked(d) {
+    var x, y, k;
 
-  if (d && centered !== d) {
-   zoomIn(d);
+    if (d && centered !== d) {
+     zoomIn(d);
 
-  } 
-  else {
-    zoomOut(d);
+    } 
+    else {
+      zoomOut(d);
+    }
+
+
+
+    if (centered){
+        // Create variable for state name string if not centered
+        state = stateName(d.id);
+
+        $("h4").text("Tryna learn about " + state + "? Check this out:");
+        if (state == "Georgia") {
+          pageSource = "http://en.wikipedia.org/wiki/Georgia_(U.S._state)"
+        }
+        else{
+        pageSource = "http://www.wikipedia.org/wiki/" + state;
+        }
+        $("iframe").attr("src", pageSource)
+        $("#myModal").modal();
+        
+        console.log(state);  
+    }
   }
-
-
-
-  if (centered){
-      // Create variable for state name string if not centered
-      state = stateName(d.id);
-
-      $("h4").text("Tryna learn about " + state + "? Check this out:");
-      if (state == "Georgia") {
-        pageSource = "http://en.wikipedia.org/wiki/Georgia_(U.S._state)"
-      }
-      else{
-      pageSource = "http://www.wikipedia.org/wiki/" + state;
-      }
-      $("iframe").attr("src", pageSource)
-      $("#myModal").modal();
-      
-      console.log(state);  
-  }
-}
 // End clicked
 
-function zoomOut() {
+  function zoomOut() {
 
-  x = width / 2;
-  y = height / 2;
-  k = 1;
-  centered = null;
+    x = width / 2;
+    y = height / 2;
+    k = 1;
+    centered = null;
 
-  // g.selectAll("path")
-  //   .classed("active", centered && function(d) { return d === centered; });
+    // g.selectAll("path")
+    //   .classed("active", centered && function(d) { return d === centered; });
 
-  g.transition()
-      .duration(750)
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-      .style("stroke-width", 1.5 / k + "px");
+    g.transition()
+        .duration(750)
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+        .style("stroke-width", 1.5 / k + "px");
 
-}
+  }
 
-function zoomIn(d) {
+  function zoomIn(d) {
 
-    var centroid = path.centroid(d);
-    x = centroid[0];
-    y = centroid[1];
-    k = 4;
-    centered = d;
+      var centroid = path.centroid(d);
+      x = centroid[0];
+      y = centroid[1];
+      k = 4;
+      centered = d;
 
-  
     
-  g.selectAll("path")
-    .classed("active", centered && function(d) { return d === centered; });
+      
+    g.selectAll("path")
+      .classed("active", centered && function(d) { return d === centered; });
 
-  g.transition()
-      .duration(750)
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-      .style("stroke-width", 1.5 / k + "px");
-
-
-
-}
-
-
-
+    g.transition()
+        .duration(750)
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+        .style("stroke-width", 1.5 / k + "px");
+  }
 
 </script>
 <body>
@@ -365,8 +359,8 @@ function zoomIn(d) {
     </div>
   </div>
   <script type="text/javascript">
-  $('#close').on('click', function () {
-      zoomOut();
+  $('#myModal').on('hidden', function () {
+    zoomOut();
   });
   </script>
 </body>
