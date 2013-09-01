@@ -94,7 +94,7 @@ svg {
 
 
 <div class="page-header" style="margin:0"> 
-  <h1>&nbsp;&nbsp;Maply v0.1 <small>by <a href="http://www.github.com">Alexander Leishman</a></small></h1>
+  <h1>&nbsp;&nbsp;Maply v0.2 <small>by <a href="http://www.github.com">Alexander Leishman</a></small></h1>
 </div>
 <h5 class="lead" style="margin-bottom:3px">Click a state, any state.</h5>
 
@@ -104,11 +104,12 @@ svg {
 
 
 <script>
-
+// define initial variables
 var width = 1100,
     height = 620,
     centered;
 
+// adjust width and height parameters
 var margin = {top: 10, left: 10, bottom: 10, right: 10}
   , width = parseInt(d3.select('#map').style('width'))
   , width = width - margin.left - margin.right
@@ -126,6 +127,8 @@ var div = d3.select("#map").append("div")
     .style("margin", "0 auto")              
     .style("opacity", 0);
 
+
+// projection
 var path = d3.geo.path()
     .projection(projection);
 
@@ -141,11 +144,13 @@ svg.append("rect")
     .attr("height", height)
     .on("click", clicked);
 
-
+// append group to the svg
 var g = svg.append("g");
 
+// run resize function on window resize
 d3.select(window).on('resize', resize);
 
+// draw the map
 d3.json("us.json", function(error, us) {
   g.append("g")
       .attr("id", "states")
@@ -353,12 +358,8 @@ d3.json("us.json", function(error, us) {
 
   function resize() {
 
-    // d3.select("#map").append("svg")
-    // .attr("class", "old");
-    // adjust things when the window size changes
+    // redefine map size
     width = parseInt(d3.select('#map').style('width'));
-    // widthb = parseInt(d3.select('rect .background').style('width'));
-    // console.log(widthm + " " + widthb);
     width = width - margin.left - margin.right;
     height = width * mapRatio;
 
@@ -369,8 +370,8 @@ d3.json("us.json", function(error, us) {
 
     // resize the map container
     d3.select("svg")
-    .attr("width", width)
-    .attr("height", height);
+        .attr("width", width)
+        .attr("height", height);
 
     // Create background for map
     svg.select("rect")
@@ -381,9 +382,9 @@ d3.json("us.json", function(error, us) {
     // resize the map
     g.select('#state-borders').attr('d', path);
     g.selectAll('.state').attr('d', path);
-}
-
+  }
 </script>
+
 <body>
   <!-- Modal -->
   <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -413,10 +414,13 @@ d3.json("us.json", function(error, us) {
     </div>
   </div>
   <script type="text/javascript">
+
+  // When modal is hidden, zoomOut()
   $('#myModal').on('hidden', function () {
     zoomOut();
   });
 
+  // Google analytics
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -427,7 +431,6 @@ d3.json("us.json", function(error, us) {
 
   var padding = parseInt(jQuery(".background").css("margin-left"));
 console.log(padding);
-
 
   </script>
 </body>
