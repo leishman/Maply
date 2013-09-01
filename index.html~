@@ -1,5 +1,5 @@
 <!-- The map and zoom and click functionality was created by Mike Bostock. (http://bl.ocks.org/mbostock/2206590)
-
+Master test
 I've simply built off of his great work. Please send suggestions to leishman3@gmail.com
 
 Alexander Leishman
@@ -38,11 +38,11 @@ Alexander Leishman
 }
 
 div.tooltip {   
-  position: absolute;           
+  position: relative;           
   text-align: center;           
   width: 70px;                  
   height: 28px;                 
-  padding: 2px;             
+  padding: 0px;             
   font: 12px sans-serif;        
   background: none;   
   border: 0px;      
@@ -69,7 +69,7 @@ svg {
   margin-right: auto;
   margin-top: 0;
   display: block;
-  /*width: 1100;*/
+  width: 1100;
 }
 
 .footer {
@@ -77,6 +77,9 @@ svg {
   text-align: center;
 }
 
+#map {
+  margin: 0 auto;
+}
 
 </style>
 <body>
@@ -93,13 +96,18 @@ svg {
 <div class="page-header" style="margin:0"> 
   <h1>&nbsp;&nbsp;Maply v0.1 <small>by <a href="http://www.github.com">Alexander Leishman</a></small></h1>
 </div>
-
 <h5 class="lead" style="margin-bottom:3px">Click a state, any state.</h5>
-<div id="map"></div>
+
+<div id="map">
+</div>
+
 
 
 <script>
 
+var width = 1100,
+    height = 620,
+    centered;
 
 var margin = {top: 10, left: 10, bottom: 10, right: 10}
   , width = parseInt(d3.select('#map').style('width'))
@@ -107,33 +115,32 @@ var margin = {top: 10, left: 10, bottom: 10, right: 10}
   , mapRatio = .5
   , height = width * mapRatio;
 
-// var width = 1100,
-//     height = 620,
-   var centered;
-
+// Define projection type
 var projection = d3.geo.albersUsa()
     .scale(width)
     .translate([width / 2, height / 2]);
 
-
-var map = d3.select("#map").append("div")   
-    .attr("class", "tooltip")               
+// Define tooltip
+var div = d3.select("#map").append("div")   
+    .attr("class", "tooltip") 
+    .style("margin", "0 auto")              
     .style("opacity", 0);
 
 var path = d3.geo.path()
     .projection(projection);
 
+// Create svg
 var svg = d3.select("#map").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-
-
+// Create background for map
 svg.append("rect")
     .attr("class", "background")
     .attr("width", width)
     .attr("height", height)
     .on("click", clicked);
+
 
 var g = svg.append("g");
 
@@ -146,6 +153,7 @@ d3.json("us.json", function(error, us) {
       .data(topojson.feature(us, us.objects.states).features)
     .enter().append("path")
       .attr("d", path)
+      .attr("class", "state")
       // BEGIN ON MOUSEOVER
       .on("mouseover", function(d){
         if(!centered) { 
@@ -153,7 +161,7 @@ d3.json("us.json", function(error, us) {
         }
 
         // Make opacity zero if map is zoomed in
-          map.transition()
+          div.transition()
             .duration(0)
             .style("opacity", function (d) {
               if(centered) {  
@@ -164,11 +172,9 @@ d3.json("us.json", function(error, us) {
               }
             });
 
-          map .html(stateName(d.id))  // Need to find better way for positioning state names
-            // .style("left", (path.centroid(d)[0]) + "px")     
-            // .style("top", (path.centroid(d)[1]) + "px"); 
-            .style("left", mouse[0] + "px")     
-            .style("top", mouse[1] + "px"); 
+          div .text(stateName(d.id))  // Need to find better way for positioning state names
+            // .style("left", (path.centroid(d)[0]+25) + "px")     
+            // .style("top", (path.centroid(d)[1]+90) + "px"); 
           })
       // END ON MOUSEOVER
       // BEGIN ON MOUSOUT
@@ -176,7 +182,7 @@ d3.json("us.json", function(error, us) {
         if(!centered){
         d3.select(this).style("fill", "#DCDCDC");
         }
-        map.transition()
+        div.transition()
           .duration(0)
           .style("opacity",0);
         })
@@ -343,10 +349,16 @@ d3.json("us.json", function(error, us) {
         .style("stroke-width", 1.5 / k + "px");
   }
 
-// Resize Window
-function resize() {
+
+
+  function resize() {
+
+    // d3.select("#map").append("svg")
+    // .attr("class", "old");
     // adjust things when the window size changes
     width = parseInt(d3.select('#map').style('width'));
+    // widthb = parseInt(d3.select('rect .background').style('width'));
+    // console.log(widthm + " " + widthb);
     width = width - margin.left - margin.right;
     height = width * mapRatio;
 
@@ -356,13 +368,19 @@ function resize() {
         .scale(width);
 
     // resize the map container
-    map
-        .style('width', width + 'px')
-        .style('height', height + 'px');
+    d3.select("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+    // Create background for map
+    svg.select("rect")
+        .attr("width", width)
+        .attr("height", height);
+
 
     // resize the map
-    map.select('.state-borders').attr('d', path);
-    map.selectAll('.states').attr('d', path);
+    g.select('#state-borders').attr('d', path);
+    g.selectAll('.state').attr('d', path);
 }
 
 </script>
@@ -406,6 +424,10 @@ function resize() {
 
   ga('create', 'UA-43640478-1', 'streetstand.com');
   ga('send', 'pageview');
+
+  var padding = parseInt(jQuery(".background").css("margin-left"));
+console.log(padding);
+
 
   </script>
 </body>
