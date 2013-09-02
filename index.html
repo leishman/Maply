@@ -1,9 +1,9 @@
 <!-- The map and zoom and click functionality was created by Mike Bostock. (http://bl.ocks.org/mbostock/2206590)
-Master test
+
 I've simply built off of his great work. Please send suggestions to leishman3@gmail.com
 develop
 Alexander Leishman
-8/29/2013
+9/1/2013
 -->
 
 <!DOCTYPE html>
@@ -121,12 +121,6 @@ var projection = d3.geo.albersUsa()
     .scale(width)
     .translate([width / 2, height / 2]);
 
-// Define tooltip
-// var div = d3.select("#map").append("div")   
-//     .attr("class", "tooltip") 
-//     .style("margin", "0 auto")              
-//     .style("opacity", 0);
-
 
 // projection
 var path = d3.geo.path()
@@ -166,29 +160,6 @@ d3.json("us.json", function(error, us) {
         }
 
         $("#state-change").replaceWith('<h5 class="lead" id="state-change" style="margin-bottom:3px">' + stateName(d.id) + '</h5>');
-        
-        // window.setTimeout(defaultText,5000);
-
-        // function defaultText(){   
-        //   $("#state-change").replaceWith('<h5 class="lead" id="state-change" style="margin-bottom:3px">Click a state, any state.</h5>');
-        // }
-
-     
-        // Make opacity zero if map is zoomed in
-          // div.transition()
-          //   .duration(0)
-          //   .style("opacity", function (d) {
-          //     if(centered) {  
-          //       return 0;
-          //     }
-          //     else{
-          //       return 0.9;
-          //     }
-          //   });
-
-          // div .text(stateName(d.id))  // Need to find better way for positioning state names
-            // .style("left", (path.centroid(d)[0]+25) + "px")     
-            // .style("top", (path.centroid(d)[1]+90) + "px"); 
           })
       // END ON MOUSEOVER
       // BEGIN ON MOUSOUT
@@ -211,22 +182,6 @@ d3.json("us.json", function(error, us) {
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("id", "state-borders")
       .attr("d", path);
-
-    // CODE TO SHOW ALL STATE LABELS
-    // g.selectAll("text")
-    //   .data(topojson.feature(us, us.objects.states).features)
-    //   .enter()
-    //   .append("svg:text")
-    //   .text(function(d){return stateName(d.id);})
-    //     .attr("x", function(d){
-    //       return path.centroid(d)[0];
-    //   })
-    //   .attr("y", function(d){
-    //       return  path.centroid(d)[1];
-    //   })
-    //   .attr("text-anchor","middle")
-    //   .attr('font-size','6pt')
-    //   .attr("class","state-name");
   });
 
 
@@ -333,9 +288,6 @@ d3.json("us.json", function(error, us) {
     y = height / 2;
     k = 1;
     centered = null;
-
-    // g.selectAll("path")
-    //   .classed("active", centered && function(d) { return d === centered; });
 
     g.transition()
         .duration(750)
