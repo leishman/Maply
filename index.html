@@ -96,7 +96,7 @@ svg {
 <div class="page-header" style="margin:0"> 
   <h1>&nbsp;&nbsp;Maply v0.2 <small>by <a href="http://www.github.com">Alexander Leishman</a></small></h1>
 </div>
-<h5 class="lead" style="margin-bottom:3px">Click a state, any state.</h5>
+<h5 class="lead" id="state-change" style="margin-bottom:3px">Click a state, any state.</h5>
 
 <div id="map">
 </div>
@@ -122,10 +122,10 @@ var projection = d3.geo.albersUsa()
     .translate([width / 2, height / 2]);
 
 // Define tooltip
-var div = d3.select("#map").append("div")   
-    .attr("class", "tooltip") 
-    .style("margin", "0 auto")              
-    .style("opacity", 0);
+// var div = d3.select("#map").append("div")   
+//     .attr("class", "tooltip") 
+//     .style("margin", "0 auto")              
+//     .style("opacity", 0);
 
 
 // projection
@@ -165,19 +165,28 @@ d3.json("us.json", function(error, us) {
         d3.select(this).style("fill", "aliceblue");
         }
 
-        // Make opacity zero if map is zoomed in
-          div.transition()
-            .duration(0)
-            .style("opacity", function (d) {
-              if(centered) {  
-                return 0;
-              }
-              else{
-                return 0.9;
-              }
-            });
+        $("#state-change").replaceWith('<h5 class="lead" id="state-change" style="margin-bottom:3px">' + stateName(d.id) + '</h5>');
+        
+        // window.setTimeout(defaultText,5000);
 
-          div .text(stateName(d.id))  // Need to find better way for positioning state names
+        // function defaultText(){   
+        //   $("#state-change").replaceWith('<h5 class="lead" id="state-change" style="margin-bottom:3px">Click a state, any state.</h5>');
+        // }
+
+     
+        // Make opacity zero if map is zoomed in
+          // div.transition()
+          //   .duration(0)
+          //   .style("opacity", function (d) {
+          //     if(centered) {  
+          //       return 0;
+          //     }
+          //     else{
+          //       return 0.9;
+          //     }
+          //   });
+
+          // div .text(stateName(d.id))  // Need to find better way for positioning state names
             // .style("left", (path.centroid(d)[0]+25) + "px")     
             // .style("top", (path.centroid(d)[1]+90) + "px"); 
           })
