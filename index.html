@@ -267,9 +267,12 @@ d3.json("us.json", function(error, us) {
         // Create variable for state name string if not centered
         state = stateName(d.id);
 
-        $("h4").text("Tryna learn about " + state + "? Check this out:");
+        $("h4").text("Want to learn about " + state + "? Check this out:");
         if (state == "Georgia") {
           pageSource = "http://en.wikipedia.org/wiki/Georgia_(U.S._state)"
+        }
+        else if (state == "Washington") {
+          pageSource = "http://en.wikipedia.org/wiki/Washington_(state)"
         }
         else{
         pageSource = "http://www.wikipedia.org/wiki/" + state;
